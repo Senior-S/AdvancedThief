@@ -1,0 +1,3 @@
+plugin_configuration:
+  permissions:
+    thief_permission: "ss.thief"
