@@ -25,7 +25,7 @@ namespace AdvancedThief
         {
             await UniTask.SwitchToMainThread();
             var user = (UnturnedUser)Context.Actor;
-            Player victim = RaycastHelper.GetPlayerFromHits(user.Player, 8f);
+            Player victim = RaycastHelper.GetPlayerFromHits(user.Player.Player, 8f);
             if (victim != null)
             {
                 if (victim.animator.gesture == EPlayerGesture.SURRENDER_START || victim.animator.gesture == EPlayerGesture.SURRENDER_STOP)
@@ -38,8 +38,8 @@ namespace AdvancedThief
                     {
                         vinventory.tryAddItem(item.item);
                     }
-                    user.Player.inventory.updateItems(7, vinventory);
-                    user.Player.inventory.sendStorage();
+                    user.Player.Player.inventory.updateItems(7, vinventory);
+                    user.Player.Player.inventory.sendStorage();
 
                     victim.inventory.onInventoryRemoved += (page, index, jar) => AvoidDuplications(vinventory, page, index, jar);
                     vinventory.onItemRemoved += (page, index, jar) => OnItemRemoved(victim, page, index, jar);
