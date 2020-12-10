@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
+using Rocket.Unturned.Chat;
 
 namespace AdvancedThief
 {
     public class CommandRob : IRocketCommand
     {
+        Items vinventory = new Items(7);
         public AllowedCaller AllowedCaller => AllowedCaller.Player;
         public string Name => "rob";
         public string Help => "Rob a player inventory!";
@@ -22,7 +24,6 @@ namespace AdvancedThief
             {
                 if (victim.animator.gesture == EPlayerGesture.SURRENDER_START || victim.animator.gesture == EPlayerGesture.SURRENDER_STOP)
                 {
-                    Items vinventory = new Items(7);
                     List<ItemJar> items = new List<ItemJar>();
                     UpdateList(victim, items);
                     vinventory.resize(7, 9);
@@ -33,9 +34,19 @@ namespace AdvancedThief
                     user.Player.inventory.updateItems(7, vinventory);
                     user.Player.inventory.sendStorage();
 
-                    victim.inventory.onInventoryRemoved += (page, index, jar) => AvoidDuplications(vinventory, page, index, jar);
+                    victim.inventory.onInventoryRemoved = (page, index, jar) =>
+                    {
+                        user.Player.inventory.closeDistantStorage();
+                        user.Player.inventory.closeStorage();
+                        user.Player.inventory.closeStorageAndNotifyClient();
+                        UnturnedChat.Say(user, "The victim try to remove a item from it inventory!");
+                    };
                     vinventory.onItemRemoved += (page, index, jar) => OnItemRemoved(victim, page, index, jar);
-                    vinventory.onItemAdded += (page, index, jar) => OnItemAdded(victim, page, index, jar);
+                    vinventory.onItemAdded += (page, index, jar) =>
+                    {
+                        victim.inventory.tryAddItem(jar.item, true);
+                    };
+
                 }
                 else
                 {
@@ -48,23 +59,23 @@ namespace AdvancedThief
             }
         }
 
-        private void AvoidDuplications(Items vinventory, byte page, byte index, ItemJar jar)
-        {
-            byte ic = vinventory.getItemCount();
-            if (ic > 0)
-            {
-                for (byte p1 = 0; p1 < ic; p1++)
-                {
-                    var s = vinventory.getItem(p1);
-                    if (s != null && s.item == jar.item) vinventory.removeItem(p1);
-                }
-            }
-        }
+        //private void AvoidDuplications(Items vinventory, byte page, byte index, ItemJar jar)
+        //{
+        //    byte ic = vinventory.getItemCount();
+        //    if (ic > 0)
+        //    {
+        //        for (byte p1 = 0; p1 < ic; p1++)
+        //        {
+        //            var s = vinventory.getItem(p1);
+        //            if (s != null && s.item == jar.item) vinventory.removeItem(p1);
+        //        }
+        //    }
+        //}
 
-        private void OnItemAdded(Player victim, byte page, byte index, ItemJar jar)
-        {
-            victim.inventory.tryAddItem(jar.item, true);
-        }
+        //private void OnItemAdded(Player victim, byte page, byte index, ItemJar jar)
+        //{
+        //    victim.inventory.tryAddItem(jar.item, true);
+        //}
 
         private void OnItemRemoved(Player victim, byte page, byte index, ItemJar jar)
         {

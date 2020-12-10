@@ -7,13 +7,13 @@ namespace AdvancedThief
     {
         protected override void Load()
         {
-            Logger.Log("[AdvancedThief] Plugin loaded correctly!");
-            Logger.Log("[AdvancedThief] If you have any error you can contact the owner in discord: Senior S#9583");
+            Logger.Log(" Plugin loaded correctly!");
+            Logger.Log(" More plugins: www.dvtserver.xyz");
         }
 
         protected override void Unload()
         {
-            Logger.Log("[AdvancedThief] Plugin unloaded correctly!");
+            Logger.Log(" Plugin unloaded correctly!");
         }
     }
 }
