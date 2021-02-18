@@ -1,4 +1,4 @@
-# AdvancedThief-OpenMod
+# AdvancedThief-OpenMod SOURCE CODE DEPRECATED!
 This plugin add a command to have a best rol in Roleplays servers!
 
 **Commands:**<br />
